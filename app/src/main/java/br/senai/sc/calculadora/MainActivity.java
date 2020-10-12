@@ -5,13 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private TextView display;
-    private String primeiroNumero = " ";
-    private String segundoNumero = " ";
-    private String operacao = " ";
+    private String primeiroNumero = "";
+    private String segundoNumero = "";
+    private String operacao = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,44 +88,66 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBotaoIgual (View v) {
-        int numero1 = Integer.parseInt(primeiroNumero);
-        int numero2 = Integer.parseInt(segundoNumero);
-        if (operacao.equals("+")) {
-            int resultado = numero1 + numero2;
-            display.setText(String.valueOf(resultado));
+        if (!primeiroNumero.isEmpty() && !segundoNumero.isEmpty()) {
+            int numero1 = Integer.parseInt(primeiroNumero);
+            int numero2 = Integer.parseInt(segundoNumero);
+            if (operacao.equals("+")) {
+                int resultado = numero1 + numero2;
+                display.setText(String.valueOf(resultado));
+            }
+            if (operacao.equals("-")) {
+                int resultado = numero1 - numero2;
+                display.setText(String.valueOf(resultado));
+            }
+            if (operacao.equals("*")) {
+                int resultado = numero1*numero2;
+                display.setText(String.valueOf(resultado));
+            }
+            if (operacao.equals("/")) {
+                int resultado = numero1/numero2;
+                display.setText(String.valueOf(resultado));
+            }
+        } else {
+            Toast.makeText(MainActivity.this, "Nenhuma operação foi selecionada", Toast.LENGTH_LONG).show();
         }
-        if (operacao.equals("-")) {
-            int resultado = numero1 - numero2;
-            display.setText(String.valueOf(resultado));
-        }
-        if (operacao.equals("*")) {
-            int resultado = numero1*numero2;
-            display.setText(String.valueOf(resultado));
-        }
-        if (operacao.equals("/")) {
-            int resultado = numero1/numero2;
-            display.setText(String.valueOf(resultado));
-        }
+
     }
 
     public void onClickBotaoAdicao (View v) {
-        atualizarDisplay("+");
-        operacao = "+";
+        if (!primeiroNumero.isEmpty()) {
+            atualizarDisplay("+");
+            operacao = "+";
+        } else {
+            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void onClickBotaoSubtrair (View v) {
-        atualizarDisplay("-");
-        operacao = "-";
+        if (!primeiroNumero.isEmpty()) {
+            atualizarDisplay("-");
+            operacao = "-";
+        } else {
+            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onClickBotaoMultiplicar (View v) {
-        atualizarDisplay("*");
-        operacao = "*";
+        if (!primeiroNumero.isEmpty()) {
+            atualizarDisplay("*");
+            operacao = "*";
+        } else {
+            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onClickBotaoDivisao(View v) {
-        atualizarDisplay("/");
-        operacao = "/";
+        if (!primeiroNumero.isEmpty()) {
+            atualizarDisplay("/");
+            operacao = "/";
+        } else {
+            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onClickReset(View v) {
