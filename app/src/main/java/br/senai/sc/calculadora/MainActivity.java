@@ -104,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
             int resultado = numero1/numero2;
             display.setText(String.valueOf(resultado));
         }
-
     }
 
     public void onClickBotaoAdicao (View v) {
