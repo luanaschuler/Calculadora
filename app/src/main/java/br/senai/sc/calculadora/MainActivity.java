@@ -11,15 +11,15 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private TextView display;
-    private String primeiroNumero = "";
-    private String segundoNumero = "";
-    private String operacao = "";
+    private String numeroDigitado = "";
+    private ArrayList<Float> numeros = new ArrayList<>();
+    private ArrayList<String> operacoes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTitle("Calculadora Top");
+        setTitle("Calculadora MaraviTop");
         display = findViewById(R.id.tv_display);
     }
 
@@ -30,11 +30,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void atualizarNumeroDigitado(String numero) {
-        if (operacao.isEmpty()) {
-            primeiroNumero = primeiroNumero + numero;
+        numeroDigitado = numeroDigitado + numero;
+    }
+
+    private void novoCalculo (String operacao) {
+        if (numeroDigitado.equals("")) {
+            Toast.makeText(MainActivity.this, "Por favor, insira um número válido", Toast.LENGTH_LONG).show();
         } else {
-            segundoNumero = segundoNumero + numero;
+            numeros.add(Float.parseFloat(numeroDigitado));
+            numeroDigitado = "";
+            operacoes.add(operacao);
+            atualizarDisplay(operacao);
         }
+    }
+    private float adicao(int posicao) {
+        float resultado = numeros.get(posicao) + numeros.get(posicao + 1);
+        numeros.set(posicao, resultado);
+        numeros.remove(posicao + 1);
+        operacoes.remove(posicao);
+        return resultado;
+    }
+
+    private float subtracao(int posicao) {
+        float resultado = numeros.get(posicao) - numeros.get(posicao + 1);
+        numeros.set(posicao, resultado);
+        numeros.remove(posicao + 1);
+        operacoes.remove(posicao);
+        return resultado;
+    }
+
+    private float multiplicacao(int posicao) {
+        float resultado = numeros.get(posicao) * numeros.get(posicao + 1);
+        numeros.set(posicao, resultado);
+        numeros.remove(posicao + 1);
+        operacoes.remove(posicao);
+        return resultado;
+    }
+
+    private float divisao(int posicao) {
+        float resultado = numeros.get(posicao) / numeros.get(posicao + 1);
+        numeros.set(posicao, resultado);
+        numeros.remove(posicao + 1);
+        operacoes.remove(posicao);
+        return resultado;
     }
 
     public void onClickBotao1 (View v) {
@@ -88,71 +126,74 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickBotaoIgual (View v) {
-        if (!primeiroNumero.isEmpty() && !segundoNumero.isEmpty()) {
-            int numero1 = Integer.parseInt(primeiroNumero);
-            int numero2 = Integer.parseInt(segundoNumero);
-            if (operacao.equals("+")) {
-                int resultado = numero1 + numero2;
-                display.setText(String.valueOf(resultado));
-            }
-            if (operacao.equals("-")) {
-                int resultado = numero1 - numero2;
-                display.setText(String.valueOf(resultado));
-            }
-            if (operacao.equals("*")) {
-                int resultado = numero1*numero2;
-                display.setText(String.valueOf(resultado));
-            }
-            if (operacao.equals("/")) {
-                int resultado = numero1/numero2;
-                display.setText(String.valueOf(resultado));
-            }
-        } else {
-            Toast.makeText(MainActivity.this, "Nenhuma operação foi selecionada", Toast.LENGTH_LONG).show();
+        if (!numeroDigitado.equals("")) {
+            numeros.add(Float.parseFloat(numeroDigitado));
         }
-
+        if (numeros.size() > operacoes.size()) {
+            while (!operacoes.isEmpty()) {
+                for (int i = 0; i < operacoes.size(); i++) {
+                    if (operacoes.get(i).equals("/")) {
+                        if (numeros.get(i + 1) == 0) {
+                            Toast.makeText(MainActivity.this, "Não foi possível realizar a divisão", Toast.LENGTH_LONG).show();
+                            resetAll();
+                        } else {
+                            float resultado = divisao(i);
+                            i = 0;
+                            continue;
+                        }
+                    }
+                    if (operacoes.get(i).equals("*")) {
+                        float resultado = multiplicacao(i);
+                        i = 0;
+                        continue;
+                    }
+                }
+                if (!operacoes.isEmpty()) {
+                    if (operacoes.get(0).equals("+")) {
+                        float resultado = adicao(0);
+                        continue;
+                    } else if (operacoes.get(0).equals("-")) {
+                        float resultado = subtracao(0);
+                        continue;
+                    }
+                }
+            }
+            if (numeros.get(0) % 1 == 0) {
+                display.setText(String.valueOf(Math.round(numeros.get(0))));
+            } else {
+                display.setText(String.valueOf(numeros.get(0)));
+            }
+            numeroDigitado = String.valueOf(numeros.get(0));
+            numeros.clear();
+        } else {
+            Toast.makeText(MainActivity.this, "Insira outro número para completar a operação", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void onClickBotaoAdicao (View v) {
-        if (!primeiroNumero.isEmpty()) {
-            atualizarDisplay("+");
-            operacao = "+";
-        } else {
-            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
-        }
-
+        novoCalculo("+");
     }
 
     public void onClickBotaoSubtrair (View v) {
-        if (!primeiroNumero.isEmpty()) {
-            atualizarDisplay("-");
-            operacao = "-";
-        } else {
-            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
-        }
+        novoCalculo("-");
     }
 
     public void onClickBotaoMultiplicar (View v) {
-        if (!primeiroNumero.isEmpty()) {
-            atualizarDisplay("*");
-            operacao = "*";
-        } else {
-            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
-        }
+        novoCalculo("*");
     }
 
     public void onClickBotaoDivisao(View v) {
-        if (!primeiroNumero.isEmpty()) {
-            atualizarDisplay("/");
-            operacao = "/";
-        } else {
-            Toast.makeText(MainActivity.this, "Por favor, inserir um número", Toast.LENGTH_LONG).show();
-        }
+        novoCalculo("/");
+    }
+
+    public  void resetAll() {
+        display.setText("");
+        numeroDigitado = "";
+        numeros.clear();
+        operacoes.clear();
     }
 
     public void onClickReset(View v) {
-        String textoDisplay = display.getText().toString();
-        textoDisplay = " ";
-        display.setText(textoDisplay);
+        resetAll();
     }
 }
